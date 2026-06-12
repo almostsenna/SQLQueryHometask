@@ -29,17 +29,17 @@
 --);
 
 --GO
-USE HogwartsDB;
-GO
+--USE HogwartsDB;
+--GO
 
-CREATE TABLE Wizards 
-(
-	WizardId INT IDENTITY(1, 1) PRIMARY KEY,
-	[Name] NVARCHAR(100) NOT NULL,
-	[House] NVARCHAR(50) NOT NULL,
-	[BloodStatus] NVARCHAR(30) CONSTRAINT DF_Wizards_BloodStatus DEFAULT 'Unknown',
+--CREATE TABLE Wizards 
+--(
+--	WizardId INT IDENTITY(1, 1) PRIMARY KEY,
+--	[Name] NVARCHAR(100) NOT NULL,
+--	[House] NVARCHAR(50) NOT NULL,
+--	[BloodStatus] NVARCHAR(30) CONSTRAINT DF_Wizards_BloodStatus DEFAULT 'Unknown',
 
  	
 
-);
-GO
+--);
+--GO
