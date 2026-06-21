@@ -1,0 +1,173 @@
+--USE Academy;
+--GO
+
+--IF COL_LENGTH('Departments', 'Building') IS NULL
+--BEGIN
+--    ALTER TABLE Departments
+--    ADD Building INT NULL;
+--END
+--GO
+
+--IF COL_LENGTH('Lectures', 'WeekNumber') IS NULL
+--BEGIN
+--    ALTER TABLE Lectures
+--    ADD WeekNumber INT NULL;
+--END
+--GO
+--IF COL_LENGTH('Groups', 'StudentsCount') IS NULL
+--BEGIN
+--    ALTER TABLE [Groups]
+--    ADD StudentsCount INT NULL;
+--END
+--GO
+
+----1
+SELECT 
+    Building,
+    SUM(Financing) AS TotalFinancing
+FROM Departments
+GROUP BY Building
+HAVING SUM(Financing) > 100000;
+----2
+SELECT 
+    [Groups].Name AS GroupName,
+    COUNT(Lectures.Id) AS LecturesCount
+FROM [Groups]
+JOIN Departments ON Departments.Id = [Groups].DepartmentId
+JOIN GroupsLectures ON GroupsLectures.GroupId = [Groups].Id
+JOIN Lectures ON Lectures.Id = GroupsLectures.LectureId
+WHERE [Groups].Year = 5
+  AND Departments.Name = N'Software Development'
+  AND Lectures.WeekNumber = 1
+GROUP BY [Groups].Name
+HAVING COUNT(Lectures.Id) > 10;
+----3
+SELECT 
+    Name AS GroupName,
+    Rating
+FROM [Groups]
+WHERE Rating > (
+    SELECT Rating
+    FROM [Groups]
+    WHERE Name = N'D221'
+);
+----4
+SELECT 
+    Surname,
+    Name,
+    Salary
+FROM Teachers
+WHERE Salary > (
+    SELECT AVG(Salary)
+    FROM Teachers
+    WHERE IsProfessor = 1
+);
+----5
+SELECT 
+    [Groups].Name AS GroupName,
+    COUNT(GroupsCurators.CuratorId) AS CuratorsCount
+FROM [Groups]
+JOIN GroupsCurators ON GroupsCurators.GroupId = [Groups].Id
+GROUP BY [Groups].Name
+HAVING COUNT(GroupsCurators.CuratorId) > 1;
+----6
+SELECT 
+    Name AS GroupName,
+    Rating
+FROM [Groups]
+WHERE Rating < (
+    SELECT MIN(Rating)
+    FROM [Groups]
+    WHERE Year = 5
+);
+----7
+SELECT 
+    Faculties.Name AS FacultyName,
+    SUM(Departments.Financing) AS TotalDepartmentsFinancing
+FROM Faculties
+JOIN Departments ON Departments.FacultyId = Faculties.Id
+GROUP BY Faculties.Id, Faculties.Name
+HAVING SUM(Departments.Financing) > (
+    SELECT SUM(D.Financing)
+    FROM Faculties F
+    JOIN Departments D ON D.FacultyId = F.Id
+    WHERE F.Name IN (N'Computer Science', N'Комп''ютерні науки')
+);
+----8
+SELECT 
+    Subjects.Name AS SubjectName,
+    Teachers.Name + N' ' + Teachers.Surname AS TeacherFullName,
+    COUNT(Lectures.Id) AS LecturesCount
+FROM Subjects
+JOIN Lectures ON Lectures.SubjectId = Subjects.Id
+JOIN Teachers ON Teachers.Id = Lectures.TeacherId
+GROUP BY 
+    Subjects.Name,
+    Teachers.Name,
+    Teachers.Surname
+HAVING COUNT(Lectures.Id) = (
+    SELECT MAX(LectureCounts.LecturesCount)
+    FROM (
+        SELECT 
+            SubjectId,
+            TeacherId,
+            COUNT(*) AS LecturesCount
+        FROM Lectures
+        GROUP BY SubjectId, TeacherId
+    ) AS LectureCounts
+);
+----9
+SELECT 
+    Subjects.Name AS SubjectName,
+    COUNT(Lectures.Id) AS LecturesCount
+FROM Subjects
+JOIN Lectures ON Lectures.SubjectId = Subjects.Id
+GROUP BY Subjects.Name
+HAVING COUNT(Lectures.Id) = (
+    SELECT MIN(SubjectLectureCounts.LecturesCount)
+    FROM (
+        SELECT 
+            SubjectId,
+            COUNT(*) AS LecturesCount
+        FROM Lectures
+        GROUP BY SubjectId
+    ) AS SubjectLectureCounts
+);
+----10
+SELECT 
+    Departments.Name AS DepartmentName,
+    SUM(GroupData.StudentsCount) AS StudentsCount,
+    COUNT(DISTINCT Subjects.Id) AS SubjectsCount
+FROM Departments
+JOIN [Groups] ON [Groups].DepartmentId = Departments.Id
+JOIN (
+    SELECT DISTINCT 
+        Id,
+        DepartmentId,
+        StudentsCount
+    FROM [Groups]
+) AS GroupData ON GroupData.Id = [Groups].Id
+JOIN GroupsLectures ON GroupsLectures.GroupId = [Groups].Id
+JOIN Lectures ON Lectures.Id = GroupsLectures.LectureId
+JOIN Subjects ON Subjects.Id = Lectures.SubjectId
+WHERE Departments.Name = N'Software Development'
+GROUP BY Departments.Name;
+----11
+SELECT
+    D.Name AS DepartmentName,
+
+    (
+        SELECT SUM(G.StudentsCount)
+        FROM [Groups] G
+        WHERE G.DepartmentId = D.Id
+    ) AS StudentsCount,
+
+    COUNT(DISTINCT S.Id) AS SubjectsCount
+FROM Departments D
+JOIN [Groups] G ON G.DepartmentId = D.Id
+JOIN GroupsLectures GL ON GL.GroupId = G.Id
+JOIN Lectures L ON L.Id = GL.LectureId
+JOIN Subjects S ON S.Id = L.SubjectId
+WHERE D.Name = N'Software Development'
+GROUP BY D.Id, D.Name;
+
