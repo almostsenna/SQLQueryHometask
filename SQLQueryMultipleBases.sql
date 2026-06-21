@@ -456,105 +456,105 @@
 --FOREIGN KEY (SubjectId) REFERENCES Subjects(Id);
 --GO
 
-USE Academy;
-GO
+--USE Academy;
+--GO
 
--- 1. Вивести всі можливі пари рядків викладачів та груп.
-SELECT 
-    Teachers.Surname AS TeacherSurname,
-    [Groups].Name AS GroupName
-FROM Teachers
-CROSS JOIN [Groups];
+---- 1. Вивести всі можливі пари рядків викладачів та груп.
+--SELECT 
+--    Teachers.Surname AS TeacherSurname,
+--    [Groups].Name AS GroupName
+--FROM Teachers
+--CROSS JOIN [Groups];
 
--- 2. Вивести назви факультетів, на яких фонд фінансування кафедр перевищує фонд фінансування факультету.
-SELECT DISTINCT
-    Faculties.Name AS FacultyName
-FROM Faculties
-JOIN Departments ON Departments.FacultyId = Faculties.Id
-WHERE Departments.Financing > Faculties.Financing;
+---- 2. Вивести назви факультетів, на яких фонд фінансування кафедр перевищує фонд фінансування факультету.
+--SELECT DISTINCT
+--    Faculties.Name AS FacultyName
+--FROM Faculties
+--JOIN Departments ON Departments.FacultyId = Faculties.Id
+--WHERE Departments.Financing > Faculties.Financing;
 
--- 3. Вивести прізвища кураторів груп та назви груп, які вони курують.
-SELECT 
-    Teachers.Surname AS CuratorSurname,
-    [Groups].Name AS GroupName
-FROM Teachers
-JOIN Curators ON Curators.TeacherId = Teachers.Id
-JOIN GroupsCurators ON GroupsCurators.CuratorId = Curators.Id
-JOIN [Groups] ON [Groups].Id = GroupsCurators.GroupId;
+---- 3. Вивести прізвища кураторів груп та назви груп, які вони курують.
+--SELECT 
+--    Teachers.Surname AS CuratorSurname,
+--    [Groups].Name AS GroupName
+--FROM Teachers
+--JOIN Curators ON Curators.TeacherId = Teachers.Id
+--JOIN GroupsCurators ON GroupsCurators.CuratorId = Curators.Id
+--JOIN [Groups] ON [Groups].Id = GroupsCurators.GroupId;
 
--- 4. Вивести прізвища викладачів, які читають лекції у групі P107.
-SELECT DISTINCT
-    Teachers.Surname AS TeacherSurname
-FROM Teachers
-JOIN Lectures ON Lectures.TeacherId = Teachers.Id
-JOIN GroupsLectures ON GroupsLectures.LectureId = Lectures.Id
-JOIN [Groups] ON [Groups].Id = GroupsLectures.GroupId
-WHERE [Groups].Name = N'P107';
+---- 4. Вивести прізвища викладачів, які читають лекції у групі P107.
+--SELECT DISTINCT
+--    Teachers.Surname AS TeacherSurname
+--FROM Teachers
+--JOIN Lectures ON Lectures.TeacherId = Teachers.Id
+--JOIN GroupsLectures ON GroupsLectures.LectureId = Lectures.Id
+--JOIN [Groups] ON [Groups].Id = GroupsLectures.GroupId
+--WHERE [Groups].Name = N'P107';
 
--- 5. Вивести прізвища викладачів та назви факультетів, на яких вони читають лекції.
-SELECT DISTINCT
-    Teachers.Surname AS TeacherSurname,
-    Faculties.Name AS FacultyName
-FROM Teachers
-JOIN Lectures ON Lectures.TeacherId = Teachers.Id
-JOIN GroupsLectures ON GroupsLectures.LectureId = Lectures.Id
-JOIN [Groups] ON [Groups].Id = GroupsLectures.GroupId
-JOIN Departments ON Departments.Id = [Groups].DepartmentId
-JOIN Faculties ON Faculties.Id = Departments.FacultyId;
+---- 5. Вивести прізвища викладачів та назви факультетів, на яких вони читають лекції.
+--SELECT DISTINCT
+--    Teachers.Surname AS TeacherSurname,
+--    Faculties.Name AS FacultyName
+--FROM Teachers
+--JOIN Lectures ON Lectures.TeacherId = Teachers.Id
+--JOIN GroupsLectures ON GroupsLectures.LectureId = Lectures.Id
+--JOIN [Groups] ON [Groups].Id = GroupsLectures.GroupId
+--JOIN Departments ON Departments.Id = [Groups].DepartmentId
+--JOIN Faculties ON Faculties.Id = Departments.FacultyId;
 
--- 6. Виведіть назви кафедр та назви груп, які до них відносяться.
-SELECT 
-    Departments.Name AS DepartmentName,
-    [Groups].Name AS GroupName
-FROM Departments
-JOIN [Groups] ON [Groups].DepartmentId = Departments.Id;
+---- 6. Виведіть назви кафедр та назви груп, які до них відносяться.
+--SELECT 
+--    Departments.Name AS DepartmentName,
+--    [Groups].Name AS GroupName
+--FROM Departments
+--JOIN [Groups] ON [Groups].DepartmentId = Departments.Id;
 
--- 7. Виведіть назви предметів, які викладає викладач Samantha Adams.
-SELECT DISTINCT
-    Subjects.Name AS SubjectName
-FROM Subjects
-JOIN Lectures ON Lectures.SubjectId = Subjects.Id
-JOIN Teachers ON Teachers.Id = Lectures.TeacherId
-WHERE Teachers.Name = N'Samantha'
-  AND Teachers.Surname = N'Adams';
+---- 7. Виведіть назви предметів, які викладає викладач Samantha Adams.
+--SELECT DISTINCT
+--    Subjects.Name AS SubjectName
+--FROM Subjects
+--JOIN Lectures ON Lectures.SubjectId = Subjects.Id
+--JOIN Teachers ON Teachers.Id = Lectures.TeacherId
+--WHERE Teachers.Name = N'Samantha'
+--  AND Teachers.Surname = N'Adams';
 
--- 8. Виведіть назви кафедр, на яких викладається предмет Теорія баз даних.
-SELECT DISTINCT
-    Departments.Name AS DepartmentName
-FROM Departments
-JOIN [Groups] ON [Groups].DepartmentId = Departments.Id
-JOIN GroupsLectures ON GroupsLectures.GroupId = [Groups].Id
-JOIN Lectures ON Lectures.Id = GroupsLectures.LectureId
-JOIN Subjects ON Subjects.Id = Lectures.SubjectId
-WHERE Subjects.Name = N'Теорія баз даних';
+---- 8. Виведіть назви кафедр, на яких викладається предмет Теорія баз даних.
+--SELECT DISTINCT
+--    Departments.Name AS DepartmentName
+--FROM Departments
+--JOIN [Groups] ON [Groups].DepartmentId = Departments.Id
+--JOIN GroupsLectures ON GroupsLectures.GroupId = [Groups].Id
+--JOIN Lectures ON Lectures.Id = GroupsLectures.LectureId
+--JOIN Subjects ON Subjects.Id = Lectures.SubjectId
+--WHERE Subjects.Name = N'Теорія баз даних';
 
--- 9. Виведіть назви груп, які належать до факультету Комп'ютерні науки.
-SELECT 
-    [Groups].Name AS GroupName
-FROM [Groups]
-JOIN Departments ON Departments.Id = [Groups].DepartmentId
-JOIN Faculties ON Faculties.Id = Departments.FacultyId
-WHERE Faculties.Name = N'Комп''ютерні науки';
+---- 9. Виведіть назви груп, які належать до факультету Комп'ютерні науки.
+--SELECT 
+--    [Groups].Name AS GroupName
+--FROM [Groups]
+--JOIN Departments ON Departments.Id = [Groups].DepartmentId
+--JOIN Faculties ON Faculties.Id = Departments.FacultyId
+--WHERE Faculties.Name = N'Комп''ютерні науки';
 
--- 10. Виведіть назви груп 5-го курсу, а також назви факультетів, до яких вони відносяться.
-SELECT 
-    [Groups].Name AS GroupName,
-    Faculties.Name AS FacultyName
-FROM [Groups]
-JOIN Departments ON Departments.Id = [Groups].DepartmentId
-JOIN Faculties ON Faculties.Id = Departments.FacultyId
-WHERE [Groups].Year = 5;
+---- 10. Виведіть назви груп 5-го курсу, а також назви факультетів, до яких вони відносяться.
+--SELECT 
+--    [Groups].Name AS GroupName,
+--    Faculties.Name AS FacultyName
+--FROM [Groups]
+--JOIN Departments ON Departments.Id = [Groups].DepartmentId
+--JOIN Faculties ON Faculties.Id = Departments.FacultyId
+--WHERE [Groups].Year = 5;
 
--- 11. Вивести прізвища викладачів та лекції, які вони читають,
--- тобто назви дисциплін та груп, лише для аудиторії B103.
-SELECT 
-    Teachers.Surname AS TeacherSurname,
-    Subjects.Name AS SubjectName,
-    [Groups].Name AS GroupName
-FROM Teachers
-JOIN Lectures ON Lectures.TeacherId = Teachers.Id
-JOIN Subjects ON Subjects.Id = Lectures.SubjectId
-JOIN GroupsLectures ON GroupsLectures.LectureId = Lectures.Id
-JOIN [Groups] ON [Groups].Id = GroupsLectures.GroupId
-WHERE Lectures.LectureRoom = N'B103';
-GO
+---- 11. Вивести прізвища викладачів та лекції, які вони читають,
+---- тобто назви дисциплін та груп, лише для аудиторії B103.
+--SELECT 
+--    Teachers.Surname AS TeacherSurname,
+--    Subjects.Name AS SubjectName,
+--    [Groups].Name AS GroupName
+--FROM Teachers
+--JOIN Lectures ON Lectures.TeacherId = Teachers.Id
+--JOIN Subjects ON Subjects.Id = Lectures.SubjectId
+--JOIN GroupsLectures ON GroupsLectures.LectureId = Lectures.Id
+--JOIN [Groups] ON [Groups].Id = GroupsLectures.GroupId
+--WHERE Lectures.LectureRoom = N'B103';
+--GO
